@@ -11,6 +11,7 @@ const createPlayer = async player => {
 };
 
 const getPlayerByEmail = async email => {
+  log.cool('Getting Games for User', email);
   return await data.getByProperty(PLAYERS_COLLECTION, 'email', email);
 }
 

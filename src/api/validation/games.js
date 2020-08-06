@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const postGameBody = Joi.object({
-  name: Joi.string().required(),
+  type: Joi.string().required(),
   createdBy: Joi.string().required()
 });
 
@@ -9,8 +9,8 @@ const defaultGameParams = Joi.object({
   gameId: Joi.string().required()
 });
 
-const putGameBody = Joi.object({
-  message: Joi.object().required()
+const patchGameBody = Joi.object({
+  game: Joi.object().required()
 });
 
 const getPlayerGamesQuery = Joi.object({
@@ -30,7 +30,7 @@ const patchPlayersBody = Joi.object({
 module.exports = {
   postGameBody,
   defaultGameParams,
-  putGameBody,
+  patchGameBody,
   getPlayerGamesQuery,
   getGamePlayersParams,
   patchPlayersBody

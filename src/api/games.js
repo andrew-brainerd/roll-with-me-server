@@ -5,17 +5,17 @@ const { validator } = require('../utils/validator');
 const {
   postGameBody,
   defaultGameParams,
-  putGameBody,
+  patchGameBody,
   getPlayerGamesQuery,
   getGamePlayersParams,
   patchPlayersBody
 } = require('./validation/games');
 
 games.post('/', validator.body(postGameBody), async (req, res) => {
-  const { body: { name, createdBy } } = req;
+  const { body: { type, createdBy} } = req;
 
-  const newGame = await gamesData.createGame(name, createdBy);
-  if (!newGame) return status.serverError(res, 'Failed', `Failed to create pod [${name}]`);
+  const newGame = await gamesData.createGame(type, createdBy);
+  if (!newGame) return status.serverError(res, 'Failed', `Failed to create ${type} game for ${createdBy}`);
 
   return status.created(res, { ...newGame });
 });
@@ -45,14 +45,14 @@ games.get('/:gameId', validator.params(defaultGameParams), async (req, res) => {
   return status.success(res, { ...game });
 });
 
-games.put('/:gameId',
+games.patch('/:gameId',
   validator.params(defaultGameParams),
-  validator.body(putGameBody),
+  validator.body(patchGameBody),
   async (req, res) => {
-    const { params: { gameId }, body: { message } } = req;
+    const { params: { gameId }, body: { game } } = req;
 
-    const logAdded = await gamesData.addLog(gameId, { messages: message });
-    return status.success(res, { ...logAdded });
+    const savedGame = await gamesData.saveGame(gameId, game);
+    return status.success(res, { ...savedGame });
   });
 
 games.delete('/:gameId', validator.params(defaultGameParams), async (req, res) => {

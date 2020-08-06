@@ -9,6 +9,6 @@ router.get('/', (req, res) => {
 
 router.use('/games', require('./games'));
 router.use('/messaging', require('./messaging'));
-router.use('/players', require('./players'));
+router.use('/users', require('./players'));
 
 module.exports = router;

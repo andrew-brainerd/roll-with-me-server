@@ -5,15 +5,18 @@ const { pusher } = require('../utils/pusher');
 const { GAMES_COLLECTION } = require('../constants/collections');
 const { getPlayerById } = require('./players');
 
-const createGame = async (name, createdBy) => {
+const createGame = async (type, createdBy) => {
   const newGame = await data.insertOne(
     GAMES_COLLECTION, {
-    name,
+    type,
     createdBy,
-    players: [createdBy]
+    currentPlayer: 'player1',
+    players: {
+      player1: createdBy
+    }
   });
 
-  log.success(`Created new game ${newGame.name} (${newGame._id})`);
+  log.success(`Created new ${type} game (${newGame._id})`);
 
   return newGame;
 };
@@ -44,11 +47,18 @@ const addPlayer = async (gameId, playerId) => {
   pusher.trigger(gameId, events.PLAYER_ADDED, { addedPlayer });
 };
 
+const saveGame = async (gameId, game) => {
+  const currentGame = await data.getById(GAMES_COLLECTION, gameId);
+
+  return await data.saveObject(GAMES_COLLECTION, { ...currentGame, ...game });
+};
+
 module.exports = {
   createGame,
   getGames,
   getGame,
   deleteGame,
   getPlayers,
-  addPlayer
+  addPlayer,
+  saveGame
 };
